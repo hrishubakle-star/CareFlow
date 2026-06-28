@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CareFlow — Caretaker Tasks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#0d1117;
+    --surface:#161b22;
+    --surface2:#1c2230;
+    --accent:#00d9a3;
+    --text:#e6edf3;
+    --muted:#8b949e;
+    --border:#30363d;
+    --danger:#ff4d6d;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'DM Sans',sans-serif;
+    min-height:100vh;
+    padding:30px;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+}
+
+.nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.logo{
+    font-size:32px;
+    font-weight:700;
+}
+
+.logo span{
+    color:var(--accent);
+}
+
+.nav-buttons{
+    display:flex;
+    gap:12px;
+}
+
+.btn{
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:10px 18px;
+    border-radius:10px;
+    text-decoration:none;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.btn:hover{
+    border-color:var(--accent);
+    color:var(--accent);
+}
+
+.hero{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:30px;
+    margin-bottom:24px;
+}
+
+.patient-name{
+    font-size:40px;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.diagnosis{
+    font-size:18px;
+    color:var(--accent);
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:20px;
+}
+
+@media(max-width:900px){
+    .grid{
+        grid-template-columns:1fr;
+    }
+}
+
+.card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:24px;
+    margin-bottom: 20px;
+}
+
+.card-title{
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:var(--accent);
+}
+
+.task{
+    background:var(--surface2);
+    padding:18px;
+    border-radius:14px;
+    margin-bottom:16px;
+}
+
+.task-name{
+    font-size:17px;
+    font-weight:700;
+    margin-bottom:8px;
+}
+
+.task-info{
+    color:var(--muted);
+    font-size:14px;
+    margin-bottom:6px;
+}
+
+.task-notes{
+    font-size:14px;
+    line-height:1.6;
+}
+
+/* New styles for lists (diet, warnings, follow up) */
+.info-list {
+    list-style: none;
+    margin-bottom: 24px;
+    margin-top: 10px;
+}
+
+.info-list li {
+    background: var(--surface2);
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.warning-list li {
+    border-left: 3px solid var(--danger);
+}
+
+.report-image{
+    width:100%;
+    border-radius:14px;
+    border:1px solid var(--border);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="nav">
+        <div class="logo">
+            Care<span>Flow</span>
+        </div>
+        <div class="nav-buttons">
+            <a href="{{ url_for('doc.upload') }}" class="btn">
+                Upload another document
+            </a>
+            <button onclick="window.print()" class="btn">
+                Print
+            </button>
+            <a href="{{ url_for('index') }}" class="btn">
+                Back to Home
+            </a>
+        </div>
+    </div>
+
+    <div class="hero">
+        <div class="patient-name">
+            {{ result.patient_name }}
+        </div>
+        <div class="diagnosis">
+            {{ result.diagnosis }}
+        </div>
+    </div>
+
+    <div class="grid">
+        <div>
+            <div class="card">
+                <div class="card-title">Medications Schedules</div>
+                {% for med in result.medications %}
+                <div class="task">
+                    <div class="task-name">{{ med.task }}</div>
+                    <div class="task-info"><strong>Priority:</strong> {{ med.priority }}</div>
+                    <div class="task-info"><strong>Timing:</strong> {{ med.timing }}</div>
+                    <div class="task-notes">{{ med.notes }}</div>
+                </div>
+                {% else %}
+                <div class="task-notes">No specific medications required.</div>
+                {% endfor %}
+            </div>
+
+            <div class="card">
+                <div class="card-title">Daily Care & Mobility</div>
+                {% for care in result.daily_care %}
+                <div class="task">
+                    <div class="task-name">{{ care.task }}</div>
+                    <div class="task-info"><strong>Priority:</strong> {{ care.priority }}</div>
+                    <div class="task-info"><strong>Timing:</strong> {{ care.timing }}</div>
+                    <div class="task-notes">{{ care.notes }}</div>
+                </div>
+                {% else %}
+                <div class="task-notes">No specific daily care tasks required.</div>
+                {% endfor %}
+            </div>
+
+            <div class="card">
+                <div class="card-title">Caretaker To-Do List</div>
+                {% for todo in result.caretaker_todo %}
+                <div class="task">
+                    <div class="task-name">{{ todo.task }}</div>
+                    <div class="task-info"><strong>Priority:</strong> {{ todo.priority }}</div>
+                    <div class="task-info"><strong>Timing:</strong> {{ todo.timing }}</div>
+                    <div class="task-notes">{{ todo.notes }}</div>
+                </div>
+                {% else %}
+                <div class="task-notes">No caretaker tasks were found.</div>
+                {% endfor %}
+            </div>
+
+            <div class="card">
+                <div class="card-title">Additional Guidelines</div>
+
+                <div class="task-name" style="margin-top: 10px;">Diet Instructions</div>
+                <ul class="info-list">
+                    {% for diet in result.diet_instructions %}
+                    <li>{{ diet }}</li>
+                    {% else %}
+                    <li>N/A</li>
+                    {% endfor %}
+                </ul>
+
+                <div class="task-name">Warning Signs to Monitor</div>
+                <ul class="info-list warning-list">
+                    {% for sign in result.warning_signs %}
+                    <li>{{ sign }}</li>
+                    {% else %}
+                    <li>N/A</li>
+                    {% endfor %}
+                </ul>
+
+                <div class="task-name">Follow Up / Next Steps</div>
+                <ul class="info-list">
+                    {% for f_up in result.follow_up %}
+                    <li>{{ f_up }}</li>
+                    {% else %}
+                    <li>N/A</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+
+        <div>
+            <div class="card">
+                <div class="card-title">Uploaded Report</div>
+                <img src="{{ url_for('static', filename='uploads/doc/' + filename) }}" alt="Uploaded Medical Document" class="report-image">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

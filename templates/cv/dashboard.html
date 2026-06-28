@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CareFlow — AR Patient Lift Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --accent: #00d9a3; 
+      --accent2: #0097ff;
+      --text: #e6edf3;
+      --muted: #7d8590;
+      --border: #30363d;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,217,163,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,217,163,0.03) 1px, transparent 1px);
+      background-size: 40px 40px; z-index: 0; pointer-events: none;
+    }
+
+    .nav {
+      position: sticky; top: 0; padding: 14px 32px; display: flex;
+      align-items: center; justify-content: space-between;
+      background: rgba(13,17,23,0.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); z-index: 10;
+    }
+
+    .nav-brand { display: flex; align-items: center; gap: 10px; }
+    .nav-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .nav-title { font-family: 'DM Serif Display', serif; font-size: 18px; }
+    .nav-title span { color: var(--accent); }
+
+    .hero { position: relative; z-index: 1; padding: 40px 40px 20px; max-width: 1200px; margin: 0 auto; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: 34px; margin-bottom: 6px; }
+    .hero p { color: var(--muted); font-size: 14px; }
+
+    .main {
+      position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 40px;
+      display: grid; grid-template-columns: 1fr 340px; gap: 20px;
+    }
+
+    .section {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden; margin-bottom: 16px;
+    }
+    
+    .section-header {
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      font-size: 13px; font-weight: 500; text-transform: uppercase;
+      letter-spacing: 0.04em; color: var(--muted); display: flex; align-items: center; gap: 10px;
+    }
+
+    /* Buttons for Toggling */
+    .controls { margin-left: auto; display: flex; gap: 8px; }
+    .btn-outline {
+      padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px;
+      background: var(--bg); color: var(--text); font-size: 12px; cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-outline:hover, .btn-outline.active { border-color: var(--accent); color: var(--accent); }
+
+    .video-container { padding: 12px; background: #000; min-height: 480px;}
+    .video-feed { width: 100%; border-radius: 8px; display: block; border: 1px solid var(--border); }
+
+    .field-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 12px 20px; border-bottom: 1px solid rgba(48,54,61,0.5); font-size: 14px;
+    }
+    .field-row:last-child { border-bottom: none; }
+    .field-key { color: var(--muted); }
+    .field-val.green { color: var(--accent); font-family: 'DM Mono', monospace; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <div class="nav-icon">👁️</div>
+    <div class="nav-title">Care<span>Flow</span></div>
+  </div>
+
+  <div>
+    <a href="{{ url_for('index') }}" class="btn-outline" style="text-decoration: none;">← Back to Home</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Patient Lift Guidance</h1>
+  <p>Real-time AR projection for caregiver safety and patient mechanics.</p>
+</div>
+
+<div class="main">
+  <div class="left-col">
+    <div class="section">
+      <div class="section-header">
+        <span>🎥</span> Live AI Projection
+        <div class="controls">
+          <button id="btn-video" class="btn-outline active" onclick="switchSource('video')">Test Video</button>
+          <button id="btn-camera" class="btn-outline" onclick="switchSource('camera')">Webcam</button>
+        </div>
+      </div>
+      <div class="video-container">
+        <img id="video-feed" src="{{ url_for('cv.video_feed', source='video') }}" class="video-feed" alt="AR Video Feed">
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="section">
+      <div class="section-header"><span>📊</span> System Status</div>
+      <div class="field-row">
+        <span class="field-key">AI Model</span>
+        <span class="field-val">BlazePose (Lite)</span>
+      </div>
+      <div class="field-row">
+        <span class="field-key">Processor</span>
+        <span class="field-val">Intel CPU</span>
+      </div>
+      <div class="field-row">
+        <span class="field-key">Frame Tracking</span>
+        <span class="field-val green">ACTIVE</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Video toggling logic
+  function switchSource(source) {
+    document.getElementById('video-feed').src = '/cv/video_feed/' + source;
+    document.getElementById('btn-video').classList.remove('active');
+    document.getElementById('btn-camera').classList.remove('active');
+    document.getElementById('btn-' + source).classList.add('active');
+  }
+
+  // ==========================================
+  // VOICE ASSISTANT LOGIC
+  // ==========================================
+  let lastPatientMsg = "";
+  let lastCaretakerWarn = "";
+
+  function speakText(text) {
+    if ('speechSynthesis' in window) {
+      // Cancel any currently playing speech so warnings don't backlog and stack up
+      window.speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      // You can adjust these to make the voice sound more urgent or calm
+      utterance.rate = 1.05; 
+      utterance.pitch = 1.0; 
+      
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+
+  async function pollStatus() {
+    try {
+      const response = await fetch("{{ url_for('cv.status_data') }}");
+      const data = await response.json();
+
+      // 1. Voice for Patient Status
+      if (data.patient_msg !== lastPatientMsg) {
+        // We ignore the "NO PATIENT DETECTED" state so it doesn't 
+        // annoy the user when the bed is empty
+        if (data.patient_msg !== "NO PATIENT DETECTED") {
+          speakText("Patient is " + data.patient_msg.toLowerCase());
+        }
+        lastPatientMsg = data.patient_msg;
+      }
+
+      // 2. Voice for Caretaker Warnings
+      if (data.caretaker_warning && data.caretaker_warning !== lastCaretakerWarn) {
+        // Clean up the text so the robot doesn't read the emoji symbols out loud
+        let cleanText = data.caretaker_warning.replace("⚠ ", "").replace("✓ ", "");
+        speakText(cleanText);
+        lastCaretakerWarn = data.caretaker_warning;
+      }
+
+    } catch (error) {
+      console.error("Telemetry fetch error:", error);
+    }
+  }
+
+  // Ping the Flask backend every 500 milliseconds (half a second)
+  setInterval(pollStatus, 500);
+
+</script>
+
+</body>
+</html>

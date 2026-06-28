@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareFlow Portal</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen">
+    <div class="max-w-6xl w-full p-6 text-center">
+        <h1 class="text-4xl font-bold text-gray-900 mb-2">Welcome to CareFlow</h1>
+        <p class="text-gray-600 mb-8">Select a service below to get started.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                <h2 class="text-2xl font-semibold text-red-600 mb-2">CareFlow SOS</h2>
+                <p class="text-gray-600 mb-4">Emergency navigator assistance and quick safety triggers.</p>
+                <a href="{{ url_for('sos.home') }}" class="inline-block bg-red-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-red-700 transition">Open Portal</a>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                <h2 class="text-2xl font-semibold text-blue-600 mb-2">CareFlow Doc</h2>
+                <p class="text-gray-600 mb-4">Analyze prescriptions and extract automated medical care task lists using AI.</p>
+                <a href="{{ url_for('doc.upload') }}" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition">Open Analyzer</a>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                <h2 class="text-2xl font-semibold text-teal-500 mb-2">CareFlow CV</h2>
+                <p class="text-gray-600 mb-4">Real-time AR projection for caregiver safety and patient mechanics.</p>
+                <a href="{{ url_for('cv.dashboard') }}" class="inline-block bg-teal-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-600 transition">Open AR Guide</a>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

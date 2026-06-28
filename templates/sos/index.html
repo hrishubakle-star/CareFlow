@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOS Compass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 h-screen flex flex-col items-center justify-center font-sans">
+
+    <div style="padding: 1rem;">
+        <a href="{{ url_for('index') }}" style="text-decoration: none; color: #dc2626; font-weight: bold;">
+            ← Return to Home
+        </a>
+    </div>
+
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+        
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">SOS Compass</h1>
+        <p class="text-gray-500 mb-8">Tap below to connect instantly with a live clinical navigator.</p>
+
+        <div class="relative inline-flex group">
+            <div class="absolute transition-all duration-1000 opacity-70 -inset-px bg-red-500 rounded-full blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-pulse"></div>
+            
+            <a href="tel:{{ phone_number }}" 
+               class="relative inline-flex items-center justify-center w-48 h-48 bg-red-600 text-white rounded-full shadow-2xl hover:bg-red-700 transition-colors focus:outline-none focus:ring-4 focus:ring-red-300">
+                <span class="text-5xl font-black tracking-widest">SOS</span>
+            </a>
+        </div>
+
+        <p class="mt-8 text-sm text-gray-400">Current routing: {{ phone_number }}</p>
+    </div>
+
+</body>
+</html>
